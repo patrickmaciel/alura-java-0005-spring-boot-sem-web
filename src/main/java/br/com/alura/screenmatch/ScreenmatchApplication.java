@@ -1,5 +1,7 @@
 package br.com.alura.screenmatch;
 
+import br.com.alura.screenmatch.models.EpisodeData;
+import br.com.alura.screenmatch.models.SeasonData;
 import br.com.alura.screenmatch.models.SerieData;
 import br.com.alura.screenmatch.service.ConsumoApi;
 import br.com.alura.screenmatch.service.ConvertData;
@@ -24,12 +26,21 @@ public class ScreenmatchApplication implements CommandLineRunner {
 		properties.load(new FileInputStream("config.properties"));
 		String apiKey = properties.getProperty("omdbKey");
 		String endereco = "https://omdbapi.com/?apikey=" + apiKey + "&t=Gilmore+Girls";
-
 		String json = consumoApi.obterDados(endereco);
 
 		ConvertData convertData = new ConvertData();
 		SerieData serieData = convertData.getData(json, SerieData.class);
-
 		System.out.println(serieData);
+
+		for (int i = 1; i <= serieData.totalSeasons(); i++) {
+			endereco = "https://omdbapi.com/?apikey=" + apiKey + "&t=Gilmore+Girls&season=" + i;
+			json = consumoApi.obterDados(endereco);
+			SeasonData seasonData = convertData.getData(json, SeasonData.class);
+			System.out.println(seasonData);
+
+			for (EpisodeData episode : seasonData.episodeDataList()) {
+				System.out.println(episode);
+			}
+		}
 	}
 }
