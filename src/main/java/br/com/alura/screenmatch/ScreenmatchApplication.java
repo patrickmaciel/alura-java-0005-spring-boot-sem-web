@@ -1,6 +1,8 @@
 package br.com.alura.screenmatch;
 
+import br.com.alura.screenmatch.models.SerieData;
 import br.com.alura.screenmatch.service.ConsumoApi;
+import br.com.alura.screenmatch.service.ConvertData;
 import java.io.FileInputStream;
 import java.util.Properties;
 import org.springframework.boot.CommandLineRunner;
@@ -21,8 +23,13 @@ public class ScreenmatchApplication implements CommandLineRunner {
 		Properties properties = new Properties();
 		properties.load(new FileInputStream("config.properties"));
 		String apiKey = properties.getProperty("omdbKey");
-		String endereco = "https://omdbapi.com/?apikey=" + apiKey + "&t=Matrix";
+		String endereco = "https://omdbapi.com/?apikey=" + apiKey + "&t=Gilmore+Girls";
 
-		System.out.println(consumoApi.obterDados(endereco));
+		String json = consumoApi.obterDados(endereco);
+
+		ConvertData convertData = new ConvertData();
+		SerieData serieData = convertData.getData(json, SerieData.class);
+
+		System.out.println(serieData);
 	}
 }
