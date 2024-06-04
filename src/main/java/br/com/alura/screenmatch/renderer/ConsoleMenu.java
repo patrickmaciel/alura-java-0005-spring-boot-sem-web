@@ -14,6 +14,7 @@ import java.util.Scanner;
 public class ConsoleMenu {
   public Scanner scanner;
   public ConsumoApi consumoApi;
+  public ConvertData convertData;
   public Properties properties;
   public String apiKey;
   public final String API_ADDRESS = "https://omdbapi.com/";
@@ -21,6 +22,7 @@ public class ConsoleMenu {
   public ConsoleMenu() throws IOException {
     this.scanner = new Scanner(System.in);
     this.consumoApi = new ConsumoApi();
+    this.convertData = new ConvertData();
     this.properties = new Properties();
     properties.load(new FileInputStream("config.properties"));
     this.apiKey = properties.getProperty("omdbKey");
@@ -34,7 +36,6 @@ public class ConsoleMenu {
     String endereco = API_ADDRESS + "?apikey=" + apiKey + "&t=" + serie.replace(" ", "+");
     String json = consumoApi.obterDados(endereco);
 
-    ConvertData convertData = new ConvertData();
     SerieData serieData = convertData.getData(json, SerieData.class);
     System.out.println("##########################");
     System.out.println("Serie: " + serieData.title());
