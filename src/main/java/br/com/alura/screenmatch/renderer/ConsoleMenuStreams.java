@@ -8,6 +8,8 @@ import br.com.alura.screenmatch.service.ConsumoApi;
 import br.com.alura.screenmatch.service.ConvertData;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -79,5 +81,20 @@ public class ConsoleMenuStreams {
         .collect(Collectors.toList());
 
     episodes.forEach(System.out::println);
+
+    System.out.println("From what year do you want to watch the episodes?");
+    int year = scanner.nextInt();
+    scanner.nextLine();
+
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    LocalDate searchDate = LocalDate.of(year, 1, 1);
+    episodes.stream()
+        .filter(e -> e.getReleaseDate() != null && e.getReleaseDate().isAfter(searchDate))
+        .forEach(e -> System.out.println(
+            "Season: " + e.getNumber()
+                + ", Episode: "
+                + e.getTitle()
+                + ", Date: "
+                + e.getReleaseDate().format(formatter)));
   }
 }
