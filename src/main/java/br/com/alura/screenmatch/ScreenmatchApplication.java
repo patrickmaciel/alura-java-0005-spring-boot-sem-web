@@ -4,6 +4,7 @@ import br.com.alura.screenmatch.renderer.ConsoleMenu;
 import br.com.alura.screenmatch.renderer.ConsoleMenuFor;
 import br.com.alura.screenmatch.renderer.ConsoleMenuForeach;
 import br.com.alura.screenmatch.renderer.ConsoleMenuLambda;
+import br.com.alura.screenmatch.renderer.ConsoleMenuStreams;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -30,7 +31,11 @@ public class ScreenmatchApplication implements CommandLineRunner {
 //		consoleMenuForeach.show();
 
 //		Using Lambda
-		ConsoleMenuLambda consoleMenuLambda = new ConsoleMenuLambda();
-		consoleMenuLambda.show();
+//		ConsoleMenuLambda consoleMenuLambda = new ConsoleMenuLambda();
+//		consoleMenuLambda.show();
+
+//		Using Streams api
+		ConsoleMenuStreams consoleMenuStreams = new ConsoleMenuStreams();
+		consoleMenuStreams.show();
 	}
 }
