@@ -65,9 +65,21 @@ public class ConsoleMenu {
       // Another alternative to the above for loop:
       seasonDataList.forEach(System.out::println);
 
+
       // Another alternative to the above for loop:
       for (i = 0; i < serieData.totalSeasons(); i++) {
-        List<EpisodeData> episodeDataList = seasonDataList.get(i).episodeDataList();
+        if (seasonDataList == null || seasonDataList.size() <= i) {
+          System.out.println("Season data is missing for season index: " + i);
+          continue;
+        }
+
+        SeasonData seasonDataItem = seasonDataList.get(i);
+        if (seasonDataItem == null || seasonDataItem.episodeDataList() == null) {
+          System.out.println("Episode data is missing for season index: " + i);
+          continue;
+        }
+
+        List<EpisodeData> episodeDataList = seasonDataItem.episodeDataList();
 
         // Old school for loop
         // for (int j = 0; j < episodeDataList.size(); j++) {
@@ -81,5 +93,8 @@ public class ConsoleMenu {
       System.out.println("------------------");
       System.out.println("");
     }
+
+    // Another alternative to the above for loop, using Lambda
+    seasonDataList.forEach(t -> t.episodeDataList().forEach(e -> System.out.println(e.title())));
   }
 }
