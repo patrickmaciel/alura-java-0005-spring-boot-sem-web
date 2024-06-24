@@ -6,14 +6,13 @@ import br.com.alura.screenmatch.models.SerieData;
 import br.com.alura.screenmatch.service.ConsumoApi;
 import br.com.alura.screenmatch.service.ConvertData;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 
-public class ConsoleMenu {
+public class ConsoleMenuFor {
   public Scanner scanner;
   public ConsumoApi consumoApi;
   public ConvertData convertData;
@@ -21,7 +20,7 @@ public class ConsoleMenu {
   public String apiKey;
   public final String API_ADDRESS = "https://omdbapi.com/";
 
-  public ConsoleMenu() throws IOException {
+  public ConsoleMenuFor() throws IOException {
     this.scanner = new Scanner(System.in);
     this.consumoApi = new ConsumoApi();
     this.convertData = new ConvertData();
@@ -57,43 +56,15 @@ public class ConsoleMenu {
       seasonDataList.add(seasonData);
 
       System.out.println("### Listing Episodes...");
-      for (EpisodeData episode : seasonData.episodeDataList()) {
+      for (int e = 0; e < seasonData.episodeDataList().size(); e++) {
+        EpisodeData episode = seasonData.episodeDataList().get(e);
         System.out.println("- Episode " + episode.number() + ":");
         System.out.println(episode);
       }
 
-      // Another alternative to the above for loop:
-      seasonDataList.forEach(System.out::println);
-
-      // Another alternative to the above for loop:
-      for (i = 0; i < serieData.totalSeasons(); i++) {
-        if (seasonDataList == null || seasonDataList.size() <= i) {
-          System.out.println("Season data is missing for season index: " + i);
-          continue;
-        }
-
-        SeasonData seasonDataItem = seasonDataList.get(i);
-        if (seasonDataItem == null || seasonDataItem.episodeDataList() == null) {
-          System.out.println("Episode data is missing for season index: " + i);
-          continue;
-        }
-
-        List<EpisodeData> episodeDataList = seasonDataItem.episodeDataList();
-
-        // Old school for loop
-        // for (int j = 0; j < episodeDataList.size(); j++) {
-
-        // Enhanced for loop
-        for (EpisodeData episodeData : episodeDataList) {
-          System.out.println("- Episode " + episodeData.title());
-        }
-      }
-
-      System.out.println("------------------");
+      System.out.println("");
+      System.out.println("..........................");
       System.out.println("");
     }
-
-    // Another alternative to the above for loop, using Lambda
-    seasonDataList.forEach(t -> t.episodeDataList().forEach(e -> System.out.println(e.title())));
   }
 }
