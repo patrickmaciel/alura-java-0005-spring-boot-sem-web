@@ -13,6 +13,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -49,7 +50,7 @@ public class ConsoleMenuPrincipal {
     System.out.println("");
 
     System.out.println("Listing Seasons...");
-    List<SeasonData> seasonDataList = new ArrayList<>();
+    ArrayList<SeasonData> seasonDataList = new ArrayList<>();
     for (int i = 1; i <= serieData.totalSeasons(); i++) {
       endereco = API_ADDRESS + "?apikey=" + apiKey + "&t=" + serie.replace(" ", "+") + "&season=" + i;
       json = consumoApi.obterDados(endereco);
@@ -57,20 +58,26 @@ public class ConsoleMenuPrincipal {
       seasonDataList.add(seasonData);
     }
 
-    List<EpisodeData> episodeDataListCollected = seasonDataList.stream()
+    List<EpisodeDetail> episodes = seasonDataList.stream()
         .flatMap(t -> t.episodeDataList().stream())
+        .map(d -> new EpisodeDetail(d.number(), d))
         .collect(Collectors.toList());
-    episodeDataListCollected.add(new EpisodeData("Episode 40 Test", 40, "10", "2024-06-16"));
 
-    episodeDataListCollected.stream()
-        .filter(e -> !e.rating().equalsIgnoreCase("N/A"))
-        .peek(e -> System.out.println("Filtering by rating"))
-        .sorted(Comparator.comparing(EpisodeData::rating). reversed())
-        .peek(e -> System.out.println("Sorting by rating"))
-        .limit(5)
-        .peek(e -> System.out.println("Limiting to 5"))
-        .map(e -> e.title().toUpperCase())
-        .peek(e -> System.out.println("Converting to uppercase"))
-        .forEach(System.out::println);
+    episodes.forEach(System.out::println);
+
+    System.out.println("");
+    System.out.println("What the name of the episode you want to search?");
+    String searchEpisode = scanner.nextLine();
+
+    Optional<EpisodeDetail> firstEpisodeFound = episodes.stream()
+        .filter(e -> e.getTitle().toUpperCase().contains(searchEpisode.toUpperCase()))
+        .findFirst();
+
+    if (firstEpisodeFound.isPresent()) {
+      firstEpisodeFound.ifPresent(
+          episodeDetail -> System.out.println("Episode found: " + episodeDetail));
+    } else {
+      System.out.println("Episode not found");
+    }
   }
 }
