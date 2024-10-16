@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -89,7 +90,14 @@ public class ConsoleMenuPrincipal {
           .collect(Collectors.groupingBy(EpisodeDetail::getSeasonNumber,
               Collectors.averagingDouble(EpisodeDetail::getRating)));
 
-      System.out.println(ratingPerSeason);
+      System.out.println("Rating per Season: " + ratingPerSeason);
+
+      DoubleSummaryStatistics est = episodes.stream()
+          .filter(e -> e.getRating() > 0.0)
+          .collect(Collectors.summarizingDouble(EpisodeDetail::getRating));
+
+      System.out.println("Rating Summary: " + est);
+      System.out.println("Average: " + est.getAverage());
     }
   }
 }
