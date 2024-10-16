@@ -13,6 +13,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Scanner;
@@ -51,33 +52,44 @@ public class ConsoleMenuPrincipal {
 
     System.out.println("Listing Seasons...");
     ArrayList<SeasonData> seasonDataList = new ArrayList<>();
-    for (int i = 1; i <= serieData.totalSeasons(); i++) {
-      endereco = API_ADDRESS + "?apikey=" + apiKey + "&t=" + serie.replace(" ", "+") + "&season=" + i;
-      json = consumoApi.obterDados(endereco);
-      SeasonData seasonData = convertData.getData(json, SeasonData.class);
-      seasonDataList.add(seasonData);
-    }
+    if (serieData.totalSeasons() != null) {
+      for (int i = 1; i <= serieData.totalSeasons(); i++) {
+        endereco =
+            API_ADDRESS + "?apikey=" + apiKey + "&t=" + serie.replace(" ", "+") + "&season=" + i;
+        json = consumoApi.obterDados(endereco);
+        SeasonData seasonData = convertData.getData(json, SeasonData.class);
+        seasonDataList.add(seasonData);
+      }
 
-    List<EpisodeDetail> episodes = seasonDataList.stream()
-        .flatMap(t -> t.episodeDataList().stream())
-        .map(d -> new EpisodeDetail(d.number(), d))
-        .collect(Collectors.toList());
+      List<EpisodeDetail> episodes = seasonDataList.stream()
+          .flatMap(t -> t.episodeDataList().stream())
+          .map(d -> new EpisodeDetail(d.number(), d))
+          .collect(Collectors.toList());
 
-    episodes.forEach(System.out::println);
+      // the block below was commented to test the Map's features
+      //    episodes.forEach(System.out::println);
+      //
+      //    System.out.println("");
+      //    System.out.println("What the name of the episode you want to search?");
+      //    String searchEpisode = scanner.nextLine();
+      //
+      //    Optional<EpisodeDetail> firstEpisodeFound = episodes.stream()
+      //        .filter(e -> e.getTitle().toUpperCase().contains(searchEpisode.toUpperCase()))
+      //        .findFirst();
+      //
+      //    if (firstEpisodeFound.isPresent()) {
+      //      firstEpisodeFound.ifPresent(
+      //          episodeDetail -> System.out.println("Episode found: " + episodeDetail));
+      //    } else {
+      //      System.out.println("Episode not found");
+      //    }
 
-    System.out.println("");
-    System.out.println("What the name of the episode you want to search?");
-    String searchEpisode = scanner.nextLine();
+      Map<Integer, Double> ratingPerSeason = episodes.stream()
+          .filter(e -> e.getRating() > 0.0)
+          .collect(Collectors.groupingBy(EpisodeDetail::getSeasonNumber,
+              Collectors.averagingDouble(EpisodeDetail::getRating)));
 
-    Optional<EpisodeDetail> firstEpisodeFound = episodes.stream()
-        .filter(e -> e.getTitle().toUpperCase().contains(searchEpisode.toUpperCase()))
-        .findFirst();
-
-    if (firstEpisodeFound.isPresent()) {
-      firstEpisodeFound.ifPresent(
-          episodeDetail -> System.out.println("Episode found: " + episodeDetail));
-    } else {
-      System.out.println("Episode not found");
+      System.out.println(ratingPerSeason);
     }
   }
 }
